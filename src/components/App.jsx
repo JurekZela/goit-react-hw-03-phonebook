@@ -15,10 +15,20 @@ export class App extends Component {
     filter: '',
   }
 
+  componentDidMount() {
+    localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.filter !== this.state.filter) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  };
+
   onAdd = (newContact) => {
     if (this.state.contacts.find(contact => contact.name.toLowerCase() === newContact.name.toLowerCase())) {
       return alert(`${newContact.name} is already in contacts.`);
-    }
+    };
 
     this.setState(prevState => {
       return {
