@@ -18,6 +18,7 @@ export class App extends Component {
   }
 
   componentDidMount() {
+    localStorage.setItem(localStorageKey, JSON.stringify(this.state.contacts));
 
     const savedContacts = localStorage.getItem(localStorageKey);
 
