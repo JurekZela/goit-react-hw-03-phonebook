@@ -18,11 +18,11 @@ export class App extends Component {
   }
 
   componentDidMount() {
-    localStorage.setItem(localStorageKey, JSON.stringify(this.state.contacts));
+    localStorage.getItem(localStorageKey, JSON.stringify(this.state.contacts));
 
     const savedContacts = localStorage.getItem(localStorageKey);
 
-    if (savedContacts !== null) {
+    if (savedContacts) {
       this.setState({
         contacts: JSON.parse(savedContacts)
       })
@@ -30,41 +30,36 @@ export class App extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.contacts !== this.state.contacts) {
-      localStorage.setItem(localStorageKey, JSON.stringify(this.state.contacts));
+     const { contacts } = this.state;
+
+    if (prevState.contacts !== contacts) {
+      localStorage.setItem(localStorageKey, JSON.stringify(contacts));
     }
   };
 
-  onAdd = (newContact) => {
-    if (this.state.contacts.find(contact => contact.name.toLowerCase() === newContact.name.toLowerCase())) {
+  onAdd = newContact => {
+    const { contacts } = this.state;
+    
+    const filteredAlreadyContact = contacts.find(({ name }) => name.toLowerCase() === newContact.name.toLowerCase())
+
+    if (filteredAlreadyContact) {
       return alert(`${newContact.name} is already in contacts.`);
     };
 
-    this.setState(prevState => {
-      return {
-        contacts: [...prevState.contacts, newContact]
-      }
-    });
+    this.setState(prevState => { return { contacts: [...prevState.contacts, newContact ]} });
   };
 
-  searchContact = contact => {
-this.setState({
-  filter: contact,
-})
-  };
+  searchContact = contact => this.setState({ filter: contact, });
 
-  removeContact = contactId => {
+  removeContact = contactId =>
     this.setState(prevState => ({
       contacts: prevState.contacts.filter(({ id }) => id !== contactId)
-    }))
-  };
+    }));
   
   render() {
       const { contacts, filter } = this.state;
 
-      const visibleContacts = contacts.filter(contact => {
-        return  contact.name.toLowerCase().includes(filter.toLocaleLowerCase());
-      })
+      const visibleContacts = contacts.filter(({ name }) => name.toLowerCase().includes(filter.toLocaleLowerCase()));
 
       return (
       <Card>
